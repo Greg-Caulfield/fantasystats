@@ -1,6 +1,7 @@
 package shwah.fantasystats.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player implements Serializable{
@@ -12,6 +13,16 @@ public class Player implements Serializable{
 	private int losses;
 	private double pointsFor;
 	private double pointsAgainst;
+	
+	public Player(int id) {
+		this.id = id;
+		this.name = "";
+		this.scores = new ArrayList<>();
+		this.wins = 0;
+		this.losses = 0;
+		this.pointsFor = 0;
+		this.pointsAgainst = 0;
+	}
 	
 	public int getId() {
 		return id;
@@ -54,6 +65,11 @@ public class Player implements Serializable{
 	}
 	public void setPointsAgainst(double pointsAgainst) {
 		this.pointsAgainst = pointsAgainst;
+	}
+	
+	@Override
+	public String toString() {
+		return "Team " + id + "," + wins + "," + losses + "," + pointsFor;
 	}
 
 
