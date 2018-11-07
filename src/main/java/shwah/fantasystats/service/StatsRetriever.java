@@ -71,34 +71,37 @@ public class StatsRetriever {
 				
 				Player p1 = idToPlayerMap.get(teamId1);
 				if(p1 == null) {
-					p1 = new Player();
+					p1 = new Player(teamId1);
 				}
 				
 				Player p2 = idToPlayerMap.get(teamId2);
 				if(p2 == null) {
-					p2 = new Player();
+					p2 = new Player(teamId2);
 				}
 				
 				Score scoreObj1 = new Score();
 				Score scoreObj2 = new Score();
 				
+				scoreObj1.setScore(score1);
+				scoreObj1.setWeek(i);
+				
+				scoreObj2.setScore(score2);
+				scoreObj2.setWeek(i);
+				
+				List<Score> scoreArr1 = p1.getScores();
+				List<Score> scoreArr2 = p2.getScores();
+				
+				scoreArr1.add(scoreObj1);
+				scoreArr2.add(scoreObj2);
+
 				scoreMap.put(score1, teamId1);
 				scoreMap.put(score2, teamId2);
 				
 				if(score1 > score2) {
-					Integer wins = winsMap.get(teamId1);
-					if(wins == null) {
-						wins = Integer.valueOf(0);
-					}
-					wins++;
-					winsMap.put(teamId1, wins);
+					p1.setWins(p1.getWins()+1);
+
 				} else {
-					Integer wins = winsMap.get(teamId2);
-					if(wins == null) {
-						wins = Integer.valueOf(0);
-					}
-					wins++;
-					winsMap.put(teamId2, wins);
+					p2.setWins(p2.getWins()+1);
 				}
 				
 
@@ -116,6 +119,8 @@ public class StatsRetriever {
 					topHalf.poll();
 					topHalf.add(score2);
 				}
+				p1.setPointsFor(pointsFor1);
+				p2.setPointsFor(pointsFor2);
 				idToPlayerMap.put(teamId1, p1);
 				idToPlayerMap.put(teamId2, p2);
 
@@ -123,18 +128,15 @@ public class StatsRetriever {
 			
 			for(Double doub : topHalf) {
 				Integer teamId = scoreMap.get(doub);
-				Integer wins = winsMap.get(teamId);
-				if(wins == null) {
-					wins = Integer.valueOf(0);
-				}
-				wins++;
-				winsMap.put(teamId, wins);
+				Player p = idToPlayerMap.get(teamId);
+				p.setWins(p.getWins()+1);
 			}
 		}
 		
-		for(Integer team : winsMap.keySet()) {
-			System.out.println("Team " + team +"," + winsMap.get(team) + "," + (matchupSize*2 -winsMap.get(team)));
-
+		for(Integer team : idToPlayerMap.keySet()) {
+			Player p = idToPlayerMap.get(team);
+			p.setLosses(matchupSize*2 -p.getWins());
+			System.out.println(p);
 		}
 
 		//System.out.println(root);
