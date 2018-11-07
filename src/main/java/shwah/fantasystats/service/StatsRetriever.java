@@ -34,8 +34,8 @@ public class StatsRetriever {
 		int seasonNum = 2018;
 		int matchupSize = 9;
 		
-		List<Integer> winsByTeamId = new ArrayList<>();
-		
+		Map<Integer,Player> idToPlayerMap = new HashMap<>();
+				
 		for(int i = 1; i <= matchupSize; i++) {
 			Queue<Double> topHalf = new PriorityQueue<>(5);
 			Map<Double, Integer> scoreMap = new HashMap<>();
@@ -61,28 +61,42 @@ public class StatsRetriever {
 			JsonNode matchup = root.path("scoreboard").path("matchups");
 			for(int j = 0; j < matchup.size(); j++){
 				JsonNode teamsNode = matchup.get(j).path("teams");
+				Integer teamId1 = teamsNode.get(0).path("teamId").asInt();
+				Integer teamId2 = teamsNode.get(1).path("teamId").asInt();
 				JsonNode id1 = teamsNode.get(0).path("teamId");
 				JsonNode score1 = teamsNode.get(0).path("score");
 				JsonNode id2 = teamsNode.get(1).path("teamId");
 				JsonNode score2 = teamsNode.get(1).path("score");
+				JsonNode pointsFor1 = teamsNode.get(0).path("team").path("record").path("pointsFor");
+				JsonNode pointsFor2 = teamsNode.get(1).path("team").path("record").path("pointsFor");
 				
-				scoreMap.put(score1.asDouble(), id1.asInt());
-				scoreMap.put(score2.asDouble(), id2.asInt());
+				Player p1 = idToPlayerMap.get(teamId1);
+				if(p1 == null) {
+					p1 = new Player();
+				}
+				
+				Player p2 = idToPlayerMap.get(teamId2);
+				if(p2 == null) {
+					p2 = new Player();
+				}
+				
+				scoreMap.put(score1.asDouble(), teamId1);
+				scoreMap.put(score2.asDouble(), teamId2);
 				
 				if(score1.asDouble() > score2.asDouble()) {
-					Integer wins = winsMap.get(id1.asInt());
+					Integer wins = winsMap.get(teamId1);
 					if(wins == null) {
 						wins = Integer.valueOf(0);
 					}
 					wins++;
-					winsMap.put(id1.asInt(), wins);
+					winsMap.put(teamId1, wins);
 				} else {
-					Integer wins = winsMap.get(id2.asInt());
+					Integer wins = winsMap.get(teamId2);
 					if(wins == null) {
 						wins = Integer.valueOf(0);
 					}
 					wins++;
-					winsMap.put(id2.asInt(), wins);
+					winsMap.put(teamId2, wins);
 				}
 				
 
@@ -100,7 +114,9 @@ public class StatsRetriever {
 					topHalf.poll();
 					topHalf.add(score2.asDouble());
 				}
-				
+				idToPlayerMap.put(teamId1, p1);
+				idToPlayerMap.put(teamId2, p2);
+
 			}
 			
 			for(Double doub : topHalf) {
