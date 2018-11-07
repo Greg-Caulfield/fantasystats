@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shwah.fantasystats.domain.Player;
+import shwah.fantasystats.domain.Score;
 
 @Service
 public class StatsRetriever {
@@ -63,12 +64,10 @@ public class StatsRetriever {
 				JsonNode teamsNode = matchup.get(j).path("teams");
 				Integer teamId1 = teamsNode.get(0).path("teamId").asInt();
 				Integer teamId2 = teamsNode.get(1).path("teamId").asInt();
-				JsonNode id1 = teamsNode.get(0).path("teamId");
-				JsonNode score1 = teamsNode.get(0).path("score");
-				JsonNode id2 = teamsNode.get(1).path("teamId");
-				JsonNode score2 = teamsNode.get(1).path("score");
-				JsonNode pointsFor1 = teamsNode.get(0).path("team").path("record").path("pointsFor");
-				JsonNode pointsFor2 = teamsNode.get(1).path("team").path("record").path("pointsFor");
+				Double score1 = teamsNode.get(0).path("score").asDouble();
+				Double score2 = teamsNode.get(1).path("score").asDouble();
+				Double pointsFor1 = teamsNode.get(0).path("team").path("record").path("pointsFor").asDouble();
+				Double pointsFor2 = teamsNode.get(1).path("team").path("record").path("pointsFor").asDouble();
 				
 				Player p1 = idToPlayerMap.get(teamId1);
 				if(p1 == null) {
@@ -80,10 +79,13 @@ public class StatsRetriever {
 					p2 = new Player();
 				}
 				
-				scoreMap.put(score1.asDouble(), teamId1);
-				scoreMap.put(score2.asDouble(), teamId2);
+				Score scoreObj1 = new Score();
+				Score scoreObj2 = new Score();
 				
-				if(score1.asDouble() > score2.asDouble()) {
+				scoreMap.put(score1, teamId1);
+				scoreMap.put(score2, teamId2);
+				
+				if(score1 > score2) {
 					Integer wins = winsMap.get(teamId1);
 					if(wins == null) {
 						wins = Integer.valueOf(0);
@@ -101,18 +103,18 @@ public class StatsRetriever {
 				
 
 				if(topHalf.size() < 5) {
-					topHalf.add(score1.asDouble());
+					topHalf.add(score1);
 				}
-				else if(topHalf.peek() < score1.asDouble()) {
+				else if(topHalf.peek() < score1) {
 					topHalf.poll();
-					topHalf.add(score1.asDouble());
+					topHalf.add(score1);
 				}
 				if(topHalf.size() < 5) {
-					topHalf.add(score2.asDouble());
+					topHalf.add(score2);
 				}
-				else if(topHalf.peek() < score2.asDouble()) {
+				else if(topHalf.peek() < score2) {
 					topHalf.poll();
-					topHalf.add(score2.asDouble());
+					topHalf.add(score2);
 				}
 				idToPlayerMap.put(teamId1, p1);
 				idToPlayerMap.put(teamId2, p2);
