@@ -161,8 +161,7 @@ public class StatsRetriever {
 				
 			}
 			
-			//last matchup in the week, calculate extra wins
-			
+			//last matchup in the week, calculate extra wins			
 			List<Score> scores = scoreRepository.findTop5ByWeekAndYearOrderByScoreDesc(i, 2018);
 			for(Score score : scores) {
 				Player p = score.getPlayer();
