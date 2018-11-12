@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,17 +22,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shwah.fantasystats.domain.Player;
 import shwah.fantasystats.domain.Score;
+import shwah.fantasystats.repos.PlayerRepository;
 
 @Service
 public class StatsRetriever {
 	//http://games.espn.com/ffl/api/v2/scoreboard?leagueId=1102919&seasonId=2018&matchupPeriodId=1
 	
-	String urlTest = "http://games.espn.com/ffl/api/v2/scoreboard?leagueId=1102919&seasonId=2018&matchupPeriodId=1";
 	String baseUri = "http://games.espn.com/ffl/api/v2/scoreboard";
 	
 	Map<Integer, Integer> winsMap = new HashMap<>();
-
 	
+	@Autowired
+	PlayerRepository playerRepository;
+
+	@Transactional
 	public void pullStats() {
 		
 		int seasonNum = 2018;
@@ -69,15 +75,36 @@ public class StatsRetriever {
 				Double pointsFor1 = teamsNode.get(0).path("team").path("record").path("pointsFor").asDouble();
 				Double pointsFor2 = teamsNode.get(1).path("team").path("record").path("pointsFor").asDouble();
 				
-				Player p1 = idToPlayerMap.get(teamId1);
+				Double pointsAgainst1 = teamsNode.get(0).path("team").path("record").path("pointsAgainst").asDouble();
+				Double pointsAgainst2 = teamsNode.get(1).path("team").path("record").path("pointsAgainst").asDouble();
+				
+				String teamNamea1= teamsNode.get(0).path("team").path("teamLocation").asText();
+				String teamNameb1= teamsNode.get(0).path("team").path("teamNickname").asText();
+
+				
+				String teamNamea2= teamsNode.get(1).path("team").path("teamLocation").asText();
+				String teamNameb2= teamsNode.get(1).path("team").path("teamNickname").asText();
+
+				
+				playerRepository.findAll();
+				
+				Player p1 = playerRepository.findByTeamId(teamId1);
+				
 				if(p1 == null) {
-					p1 = new Player(teamId1);
+					p1 = new Player();
+					p1.setTeamId(teamId1);
 				}
 				
-				Player p2 = idToPlayerMap.get(teamId2);
+				p1.setName(teamNamea1.trim() + " " + teamNameb1);
+				
+				Player p2 = playerRepository.findByTeamId(teamId2);
 				if(p2 == null) {
-					p2 = new Player(teamId2);
+					p2 = new Player();
+					p2.setTeamId(teamId2);
 				}
+				
+				p2.setName(teamNamea2.trim() + " " + teamNameb2);
+
 				
 				Score scoreObj1 = new Score();
 				Score scoreObj2 = new Score();
@@ -120,22 +147,26 @@ public class StatsRetriever {
 					topHalf.add(score2);
 				}
 				p1.setPointsFor(pointsFor1);
+				p1.setPointsAgainst(pointsAgainst1);
 				p2.setPointsFor(pointsFor2);
-				idToPlayerMap.put(teamId1, p1);
-				idToPlayerMap.put(teamId2, p2);
+				p2.setPointsAgainst(pointsAgainst2);
+
+				playerRepository.save(p1);
+				playerRepository.save(p2);
 
 			}
 			
 			for(Double doub : topHalf) {
 				Integer teamId = scoreMap.get(doub);
-				Player p = idToPlayerMap.get(teamId);
+				Player p = playerRepository.findByTeamId(teamId);
 				p.setWins(p.getWins()+1);
+				playerRepository.save(p);
 			}
 		}
 		
-		for(Integer team : idToPlayerMap.keySet()) {
-			Player p = idToPlayerMap.get(team);
+		for(Player p : playerRepository.findAll()) {
 			p.setLosses(matchupSize*2 -p.getWins());
+			playerRepository.save(p);
 			System.out.println(p);
 		}
 

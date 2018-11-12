@@ -4,31 +4,42 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player implements Serializable{
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
+@Entity
+public class Player extends AbstractDomain {
+
+
+	@Column
+	private int teamId;
 	
-	private int id;
+	@Column
 	private String name;
-	private List<Score> scores;
+	
+	@OneToMany(mappedBy="player")
+	private List<Score> scores = new ArrayList<>();
+	
+	@Column
 	private int wins;
+	
+	@Column
 	private int losses;
+	
+	@Column
 	private double pointsFor;
+	
+	@Column
 	private double pointsAgainst;
 	
-	public Player(int id) {
-		this.id = id;
-		this.name = "";
-		this.scores = new ArrayList<>();
-		this.wins = 0;
-		this.losses = 0;
-		this.pointsFor = 0;
-		this.pointsAgainst = 0;
+	public int getTeamId() {
+		return teamId;
 	}
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
+	public void setTeamId(int teamId) {
+		this.teamId = teamId;
 	}
 	public String getName() {
 		return name;
@@ -69,7 +80,7 @@ public class Player implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "Team " + id + "," + wins + "," + losses + "," + pointsFor;
+		return "Team " + teamId + "," + wins + "," + losses + "," + pointsFor;
 	}
 
 

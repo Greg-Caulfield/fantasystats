@@ -1,12 +1,14 @@
 package shwah.fantasystats.domain;
 
-public class Matchup {
+import javax.persistence.Entity;
+
+public class Matchup extends AbstractDomain {
+	
 	
 	private Player player1;
 	private Player player2;
 	private int week;
 	private int year;
-	
 	
 	public Player getPlayer1() {
 		return player1;
@@ -32,7 +34,5 @@ public class Matchup {
 	public void setYear(int year) {
 		this.year = year;
 	}
-	
-	
 
 }
