@@ -169,15 +169,7 @@ public class StatsRetriever {
 				playerRepository.save(p);
 			}	
 		}
-		
-		for(int i = 1; i < 10; i++) {
-			List<Score> scores = scoreRepository.findTop5ByWeekAndYearOrderByScoreDesc(i, 2018);
-			for(Score s : scores) {
-				System.out.print(s.getPlayer().getTeamId() + " " + s.getScore() + ",");
-			}
-			System.out.println();
-		}
-		
+
 		for(Player p : playerRepository.findAll()) {
 			p.setLosses(matchupSize*2 -p.getWins());
 			playerRepository.save(p);
