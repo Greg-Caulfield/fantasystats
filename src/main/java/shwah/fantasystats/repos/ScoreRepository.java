@@ -12,6 +12,6 @@ import shwah.fantasystats.domain.Score;
 public interface ScoreRepository extends JpaRepository<Score,Integer> {
 
 	//Find top 5 scores for a given week and year
-	List<Score> findTop5ByWeekAndYearOrderByScore(@Param("week") int week,@Param("year") int year);
+	List<Score> findTop5ByWeekAndYearOrderByScoreDesc(@Param("week") int week,@Param("year") int year);
 	
 }
