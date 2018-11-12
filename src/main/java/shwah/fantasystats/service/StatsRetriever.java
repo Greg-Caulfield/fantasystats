@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import shwah.fantasystats.domain.Player;
 import shwah.fantasystats.domain.Score;
 import shwah.fantasystats.repos.PlayerRepository;
+import shwah.fantasystats.repos.ScoreRepository;
 
 @Service
 public class StatsRetriever {
@@ -32,6 +33,9 @@ public class StatsRetriever {
 		
 	@Autowired
 	PlayerRepository playerRepository;
+	
+	@Autowired
+	ScoreRepository scoreRepository;
 
 	@Transactional
 	public void pullStats() {
@@ -80,17 +84,12 @@ public class StatsRetriever {
 				
 				String teamNamea2= teamsNode.get(1).path("team").path("teamLocation").asText();
 				String teamNameb2= teamsNode.get(1).path("team").path("teamNickname").asText();
-
-				
-				playerRepository.findAll();
 				
 				Player p1 = playerRepository.findByTeamId(teamId1);
-				
 				if(p1 == null) {
 					p1 = new Player();
 					p1.setTeamId(teamId1);
 				}
-				
 				p1.setName(teamNamea1.trim() + " " + teamNameb1);
 				
 				Player p2 = playerRepository.findByTeamId(teamId2);
@@ -98,19 +97,19 @@ public class StatsRetriever {
 					p2 = new Player();
 					p2.setTeamId(teamId2);
 				}
-				
 				p2.setName(teamNamea2.trim() + " " + teamNameb2);
 
-				
 				Score scoreObj1 = new Score();
 				Score scoreObj2 = new Score();
 				
 				scoreObj1.setScore(score1);
 				scoreObj1.setWeek(i);
+				scoreObj1.setYear(seasonNum);
 				scoreObj1.setPlayer(p1);
 				
 				scoreObj2.setScore(score2);
 				scoreObj2.setWeek(i);
+				scoreObj2.setYear(seasonNum);
 				scoreObj2.setPlayer(p2);
 				
 				List<Score> scoreArr1 = p1.getScores();
@@ -129,7 +128,6 @@ public class StatsRetriever {
 					p2.setWins(p2.getWins()+1);
 				}
 				
-
 				if(topHalf.size() < 5) {
 					topHalf.add(score1);
 				}
@@ -149,8 +147,12 @@ public class StatsRetriever {
 				p2.setPointsFor(pointsFor2);
 				p2.setPointsAgainst(pointsAgainst2);
 
+				p1.setScores(scoreArr1);
+				p2.setScores(scoreArr2);
+				
 				playerRepository.save(p1);
 				playerRepository.save(p2);
+				
 				
 			}
 			
