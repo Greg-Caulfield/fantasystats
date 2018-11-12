@@ -161,19 +161,20 @@ public class StatsRetriever {
 				
 			}
 			
-		
-			for(Double doub : topHalf) {
-				Integer teamId = scoreMap.get(doub);
-				Player p = playerRepository.findByTeamId(teamId);
+			//last matchup in the week, calculate extra wins
+			
+			List<Score> scores = scoreRepository.findTop5ByWeekAndYearOrderByScoreDesc(i, 2018);
+			for(Score score : scores) {
+				Player p = score.getPlayer();
 				p.setWins(p.getWins()+1);
 				playerRepository.save(p);
-			}
+			}	
 		}
 		
 		for(int i = 1; i < 10; i++) {
 			List<Score> scores = scoreRepository.findTop5ByWeekAndYearOrderByScoreDesc(i, 2018);
 			for(Score s : scores) {
-				System.out.print(s.getScore() + ",");
+				System.out.print(s.getPlayer().getTeamId() + " " + s.getScore() + ",");
 			}
 			System.out.println();
 		}
