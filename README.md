@@ -8,6 +8,7 @@ Currently outputs a comma-separated string of the team ids, wins, losses, and po
 <ul>
 <li>Order the output of teams automatically based on wins then points for.</li>
 <li>Refactor to more than one big method.</li>
+<li>Account for ties.</li>
 <li>Move model objects into repositories.</li>
 <li>Expose endpoints to view stats on a per team basis.</li>
 </ul>  
