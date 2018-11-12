@@ -17,5 +17,4 @@ Currently outputs a comma-separated string of the team ids, wins, losses, and po
 <ul>
 <li>Build corresponding frontend application using Vue.js.</li>
 <li>Host application on cloud provided servers.</li>
-</ul>  
-
+</ul>

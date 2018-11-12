@@ -1,6 +1,5 @@
 package shwah.fantasystats.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 @Entity
 public class Player extends AbstractDomain {

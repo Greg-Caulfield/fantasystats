@@ -29,9 +29,7 @@ public class StatsRetriever {
 	//http://games.espn.com/ffl/api/v2/scoreboard?leagueId=1102919&seasonId=2018&matchupPeriodId=1
 	
 	String baseUri = "http://games.espn.com/ffl/api/v2/scoreboard";
-	
-	Map<Integer, Integer> winsMap = new HashMap<>();
-	
+		
 	@Autowired
 	PlayerRepository playerRepository;
 
@@ -40,9 +38,7 @@ public class StatsRetriever {
 		
 		int seasonNum = 2018;
 		int matchupSize = 9;
-		
-		Map<Integer,Player> idToPlayerMap = new HashMap<>();
-				
+						
 		for(int i = 1; i <= matchupSize; i++) {
 			Queue<Double> topHalf = new PriorityQueue<>(5);
 			Map<Double, Integer> scoreMap = new HashMap<>();
@@ -111,9 +107,11 @@ public class StatsRetriever {
 				
 				scoreObj1.setScore(score1);
 				scoreObj1.setWeek(i);
+				scoreObj1.setPlayer(p1);
 				
 				scoreObj2.setScore(score2);
 				scoreObj2.setWeek(i);
+				scoreObj2.setPlayer(p2);
 				
 				List<Score> scoreArr1 = p1.getScores();
 				List<Score> scoreArr2 = p2.getScores();
@@ -153,7 +151,7 @@ public class StatsRetriever {
 
 				playerRepository.save(p1);
 				playerRepository.save(p2);
-
+				
 			}
 			
 			for(Double doub : topHalf) {
@@ -169,9 +167,6 @@ public class StatsRetriever {
 			playerRepository.save(p);
 			System.out.println(p);
 		}
-
-		//System.out.println(root);
-		//JsonNode name = root.path("name");
 	}
 
 }

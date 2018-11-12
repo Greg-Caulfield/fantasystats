@@ -1,11 +1,9 @@
 package shwah.fantasystats.domain;
 
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Score extends AbstractDomain {
@@ -15,6 +13,9 @@ public class Score extends AbstractDomain {
 	
 	@Column
 	private int week;
+	
+	@Column
+	private int year;
 	
 	@ManyToOne
 	private Player player;
