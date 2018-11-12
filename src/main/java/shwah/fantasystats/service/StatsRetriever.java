@@ -112,6 +112,9 @@ public class StatsRetriever {
 				scoreObj2.setYear(seasonNum);
 				scoreObj2.setPlayer(p2);
 				
+				scoreObj1 = scoreRepository.save(scoreObj1);
+				scoreObj2 = scoreRepository.save(scoreObj2);
+				
 				List<Score> scoreArr1 = p1.getScores();
 				List<Score> scoreArr2 = p2.getScores();
 				
@@ -147,8 +150,10 @@ public class StatsRetriever {
 				p2.setPointsFor(pointsFor2);
 				p2.setPointsAgainst(pointsAgainst2);
 
+				
 				p1.setScores(scoreArr1);
 				p2.setScores(scoreArr2);
+				
 				
 				playerRepository.save(p1);
 				playerRepository.save(p2);
@@ -156,12 +161,21 @@ public class StatsRetriever {
 				
 			}
 			
+		
 			for(Double doub : topHalf) {
 				Integer teamId = scoreMap.get(doub);
 				Player p = playerRepository.findByTeamId(teamId);
 				p.setWins(p.getWins()+1);
 				playerRepository.save(p);
 			}
+		}
+		
+		for(int i = 1; i < 10; i++) {
+			List<Score> scores = scoreRepository.findTop5ByWeekAndYearOrderByScoreDesc(i, 2018);
+			for(Score s : scores) {
+				System.out.print(s.getScore() + ",");
+			}
+			System.out.println();
 		}
 		
 		for(Player p : playerRepository.findAll()) {
